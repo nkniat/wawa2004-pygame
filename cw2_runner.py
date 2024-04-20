@@ -3,11 +3,24 @@ from sys import exit
 
 
 def display_score():
-    current_time = pygame.time.get_ticks() - start_time
+    current_time = int(pygame.time.get_ticks() / 1000) - start_time
     score_surface = font.render(f'{current_time}', 1, "Black")
     score_rect = score_surface.get_rect(center=(300, 20))
     screen.blit(score_surface, score_rect)
     return current_time
+
+
+def player_animation():
+    global player_surface, player_index
+
+    if player_rect.bottom < 300:
+        player_surface = player_jump
+    else:
+        player_index = player_index + 0.1
+        if player_index >= len(player_walk):
+            player_index = 0
+        player_surface = player_walk[int(player_index)]
+
 
 pygame.init()  # zainicjalizowanie silnika pygame
 
@@ -31,7 +44,17 @@ mushroom_surface = pygame.image.load('images/mushroom.png').convert_alpha()
 mushroom_rect = mushroom_surface.get_rect(bottomright=(700, 360))
 #mushroom_pos_x = 700 # niepotrzebne już, bo będzie w atrybucie Rect jako 'x'
 
-player_surface = pygame.image.load('images/girl_stay.png').convert_alpha()
+# player_surface = pygame.image.load('images/girl_stay.png').convert_alpha()
+# player_rect = player_surface.get_rect(midbottom=(60, 360))
+
+# komplet surface do animacji
+player_walk1 = pygame.image.load('images/girl_walk.png').convert_alpha()
+player_walk2 = pygame.image.load('images/girl_walk2.png').convert_alpha()
+player_walk = [player_walk1, player_walk2]
+player_index = 0
+player_jump = pygame.image.load('images/girl_jump.png').convert_alpha()
+
+player_surface = player_walk[player_index]
 player_rect = player_surface.get_rect(midbottom=(60, 360))
 
 # ekran powitalny
@@ -63,13 +86,13 @@ while True:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
                 mushroom_rect.x = 700
-                start_time = pygame.time.get_ticks()
+                start_time = int(pygame.time.get_ticks() / 1000)
 
     if game_active:
         screen.blit(sky_surface, (0, 0))
         #screen.blit(text_surface, text_rect)  #sam tekst
         score = display_score()
-        screen.blit(player_surface, player_rect)
+        #screen.blit(player_surface, player_rect)
 
         # przesuwanie przeszkody
         mushroom_rect.x -= step
@@ -86,6 +109,7 @@ while True:
         player_rect.y += player_gravity
         if player_rect.bottom >= 360:
             player_rect.bottom = 360
+        player_animation()
         screen.blit(player_surface, player_rect)
 
         if player_rect.colliderect(mushroom_rect):
