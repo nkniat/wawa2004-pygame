@@ -24,6 +24,8 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print('kliknieto')
 
     screen.blit(sky_surface, (0, 0))
     screen.blit(text_surface, (250, 10))
@@ -33,6 +35,15 @@ while True:
     if mushroom_rect.x < -100:
         mushroom_rect.x = 700
     screen.blit(mushroom_surface, mushroom_rect)
+
+    # if player_rect.colliderect(mushroom_rect):
+    #     print('Zderzenie')
+
+    # mouse_pos = pygame.mouse.get_pos()
+    # if player_rect.collidepoint(mouse_pos):
+    #     print("zderzenie")
+
+    #print(pygame.mouse.get_pressed())
 
     pygame.display.update()
     clock.tick(60)
