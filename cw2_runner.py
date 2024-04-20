@@ -1,5 +1,14 @@
 import pygame
 from sys import exit
+
+
+def display_score():
+    current_time = pygame.time.get_ticks() - start_time
+    score_surface = font.render(f'{current_time}', 1, "Black")
+    score_rect = score_surface.get_rect(center=(300, 20))
+    screen.blit(score_surface, score_rect)
+    return current_time
+
 pygame.init()  # zainicjalizowanie silnika pygame
 
 WIDTH, HEIGHT = 600, 400
@@ -7,9 +16,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Czerwony kapturek')
 clock = pygame.time.Clock()
 font = pygame.font.SysFont('Arial', 24)
+
 step = 4
 player_gravity = 0
 game_active = True
+start_time = 0
 
 sky_surface = pygame.image.load('images/background.png').convert()
 
@@ -52,10 +63,12 @@ while True:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
                 mushroom_rect.x = 700
+                start_time = pygame.time.get_ticks()
 
     if game_active:
         screen.blit(sky_surface, (0, 0))
-        screen.blit(text_surface, text_rect)
+        #screen.blit(text_surface, text_rect)  #sam tekst
+        score = display_score()
         screen.blit(player_surface, player_rect)
 
         # przesuwanie przeszkody
@@ -90,7 +103,18 @@ while True:
         screen.fill("Black")
         screen.blit(game_name, game_rect)
         screen.blit(player_stand, player_stand_rect)
-        screen.blit(game_msg, game_msg_rect)
+        # screen.blit(game_msg, game_msg_rect)
+
+        # score
+        score_msg = font.render(f'Twoj wynik to: {score}', 1, "White")
+        score_msg_rect = score_msg.get_rect(center=(300, 360))
+
+
+        if score == 0:
+            screen.blit(game_msg, game_msg_rect)
+        else:
+            screen.blit(score_msg, score_msg_rect)
+
 
     pygame.display.update()
     clock.tick(60)
